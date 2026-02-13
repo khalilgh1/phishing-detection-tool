@@ -7,7 +7,7 @@ Each route is registered on a Blueprint so the app stays modular.
 from flask import Blueprint, request, jsonify
 from .model import predict
 from .url_model import predict_url
-from ..storing_and_hashing import find_visual_match
+# from ..storing_and_hashing import find_visual_match
 from urllib.parse import urlparse
 
 api = Blueprint("api", __name__)
