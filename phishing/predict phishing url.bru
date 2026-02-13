@@ -1,0 +1,15 @@
+meta {
+  name: predict phishing url
+  type: http
+  seq: 3
+}
+
+post {
+  url: http://localhost:5000/predict-url
+  body: none
+  auth: inherit
+}
+
+settings {
+  encodeUrl: true
+}

@@ -1,12 +1,13 @@
 /**
- * content.js  —  Osprey Content Script (Gmail Only)
+ * content.js  —  Osprey Content Script (Gmail + URL Scanner)
  *
- * Injected into Gmail pages. It:
- *   1. Monitors URL hash for email-open pattern (#inbox/<id>),
- *      re-triggers on every SPA navigation.
- *   2. Extracts sender, subject, and body from the Gmail DOM.
- *   3. Sends the email text to the backend via the service worker.
- *   4. Displays the phishing detection result in a branded overlay.
+ * Injected into every page. It:
+ *   1. Detects page type (Gmail vs other).
+ *   2. Gmail → monitors for email opens, extracts email content,
+ *      sends to the DistilBERT email model for phishing prediction.
+ *   3. Other → extracts the page URL, sends to the URL classification
+ *      model for threat detection (phishing / defacement / malware).
+ *   4. Displays results in a branded overlay.
  *
  * Modules loaded via manifest "js" array (order matters):
  *   Utils → GmailModule → OverlayUI → this file
@@ -26,6 +27,16 @@ function log(...args) {
 }
 function warn(...args) {
     console.warn("[Osprey]", ...args);
+}
+
+// ──────────────────────────────────────────────
+// Page-type Detection
+// ──────────────────────────────────────────────
+
+function detectPageType() {
+    const url = window.location.href;
+    if (url.startsWith(CONFIG.gmailOrigin)) return "gmail";
+    return "other";
 }
 
 // ──────────────────────────────────────────────
@@ -78,6 +89,79 @@ function predictEmail(emailText) {
             }
         );
     });
+}
+
+/**
+ * Send a URL to the backend via the service worker for classification.
+ * @param {string} url  The page URL
+ * @returns {Promise<object>}  Classification result from the backend
+ */
+function predictUrl(url) {
+    return new Promise((resolve, reject) => {
+        chrome.runtime.sendMessage(
+            { type: "PREDICT_URL", payload: { url } },
+            (response) => {
+                if (chrome.runtime.lastError) {
+                    reject(new Error(chrome.runtime.lastError.message));
+                    return;
+                }
+                if (response?.success) {
+                    resolve(response.result);
+                } else {
+                    reject(new Error(response?.error || "URL prediction failed"));
+                }
+            }
+        );
+    });
+}
+
+// ──────────────────────────────────────────────
+// Non-Gmail: URL Classification Flow
+// ──────────────────────────────────────────────
+
+/** Track the last URL we analyzed to avoid duplicates */
+let lastAnalyzedUrl = "";
+
+/**
+ * Analyze the current page URL via the backend URL model.
+ */
+async function analyzeCurrentUrl() {
+    const url = window.location.href;
+
+    // Skip internal pages
+    if (url.startsWith("chrome://") || url.startsWith("chrome-extension://") ||
+        url.startsWith("edge://") || url.startsWith("about:") ||
+        url.startsWith("file://")) {
+        log("Internal page — skipping URL analysis.");
+        return;
+    }
+
+    // Avoid re-analyzing the same URL
+    if (url === lastAnalyzedUrl) {
+        log("Same URL already analyzed — skipping.");
+        return;
+    }
+    lastAnalyzedUrl = url;
+
+    log("Analyzing URL:", url);
+
+    // Show loading overlay
+    OverlayUI.showUrlLoading(url);
+
+    try {
+        const result = await predictUrl(url);
+        log("URL prediction result:", result);
+
+        OverlayUI.showUrlResult({
+            url,
+            label: result.label_name,
+            confidence: result.confidence,
+            probabilities: result.probabilities,
+        });
+    } catch (error) {
+        warn("URL prediction error:", error.message);
+        OverlayUI.showUrlError(url, error.message);
+    }
 }
 
 // ──────────────────────────────────────────────
@@ -223,6 +307,13 @@ async function tryExtractAndPredict() {
 // ──────────────────────────────────────────────
 
 (function init() {
-    log(`Osprey active — ${window.location.href}`);
-    startGmailWatcher();
+    const pageType = detectPageType();
+    log(`Osprey active — ${pageType} — ${window.location.href}`);
+
+    if (pageType === "gmail") {
+        startGmailWatcher();
+    } else {
+        // Non-Gmail page: analyze the URL after a short delay
+        setTimeout(() => analyzeCurrentUrl(), 1500);
+    }
 })();

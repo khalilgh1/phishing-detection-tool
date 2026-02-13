@@ -149,6 +149,126 @@ var OverlayUI = (function () {
     }
 
     // ──────────────────────────────────────────────
+    // URL Scanning Overlays (non-Gmail pages)
+    // ──────────────────────────────────────────────
+
+    /**
+     * Show loading state while the backend classifies a URL.
+     */
+    function showUrlLoading(url) {
+        remove();
+        const overlay = _createShell();
+
+        const content = document.createElement("div");
+        content.className = "osprey-overlay__content";
+
+        // URL info
+        const urlInfo = document.createElement("div");
+        urlInfo.className = "osprey-overlay__email-info";
+        urlInfo.innerHTML =
+            `<div class="osprey-overlay__field"><span class="osprey-overlay__label">URL:</span> ${_esc(_truncUrl(url))}</div>`;
+        content.appendChild(urlInfo);
+
+        // Spinner
+        const spinner = document.createElement("div");
+        spinner.className = "osprey-overlay__spinner-wrap";
+        spinner.innerHTML =
+            '<div class="osprey-overlay__spinner"></div>' +
+            '<div class="osprey-overlay__spinner-text">Scanning website\u2026</div>';
+        content.appendChild(spinner);
+
+        overlay.appendChild(content);
+        document.body.appendChild(overlay);
+        _makeDraggable(overlay, overlay.querySelector(".osprey-overlay__header"));
+    }
+
+    /**
+     * Show URL classification result.
+     */
+    function showUrlResult(data) {
+        remove();
+        const { url, label, confidence, probabilities } = data;
+
+        const overlay = _createShell();
+
+        const content = document.createElement("div");
+        content.className = "osprey-overlay__content";
+
+        // ── Result Badge ──
+        const badgeConfig = _getUrlBadgeConfig(label);
+        const badge = document.createElement("div");
+        badge.className = `osprey-overlay__badge ${badgeConfig.cssClass}`;
+        badge.innerHTML = `<span class="osprey-overlay__badge-icon">${badgeConfig.icon}</span> ${badgeConfig.text}`;
+        content.appendChild(badge);
+
+        // ── Confidence Bar ──
+        const confWrap = document.createElement("div");
+        confWrap.className = "osprey-overlay__confidence";
+        const confPct = Math.round(confidence * 100);
+        confWrap.innerHTML =
+            `<div class="osprey-overlay__conf-label">Confidence: <strong>${confPct}%</strong></div>` +
+            `<div class="osprey-overlay__conf-bar">` +
+            `<div class="osprey-overlay__conf-fill ${badgeConfig.fillClass}" style="width:${confPct}%"></div>` +
+            `</div>`;
+        content.appendChild(confWrap);
+
+        // ── Probabilities ──
+        const probDiv = document.createElement("div");
+        probDiv.className = "osprey-overlay__probabilities";
+        probDiv.innerHTML =
+            `<div class="osprey-overlay__prob-row"><span>Benign:</span><span>${Math.round((probabilities.benign || 0) * 100)}%</span></div>` +
+            `<div class="osprey-overlay__prob-row"><span>Defacement:</span><span>${Math.round((probabilities.defacement || 0) * 100)}%</span></div>` +
+            `<div class="osprey-overlay__prob-row"><span>Phishing:</span><span>${Math.round((probabilities.phishing || 0) * 100)}%</span></div>` +
+            `<div class="osprey-overlay__prob-row"><span>Malware:</span><span>${Math.round((probabilities.malware || 0) * 100)}%</span></div>`;
+        content.appendChild(probDiv);
+
+        // ── Divider ──
+        content.appendChild(_createDivider());
+
+        // ── URL Info ──
+        const urlInfo = document.createElement("div");
+        urlInfo.className = "osprey-overlay__email-info";
+        urlInfo.innerHTML =
+            `<div class="osprey-overlay__field"><span class="osprey-overlay__label">URL:</span> ${_esc(_truncUrl(url))}</div>`;
+        content.appendChild(urlInfo);
+
+        overlay.appendChild(content);
+        document.body.appendChild(overlay);
+        _makeDraggable(overlay, overlay.querySelector(".osprey-overlay__header"));
+    }
+
+    /**
+     * Show error state for URL analysis.
+     */
+    function showUrlError(url, errorMsg) {
+        remove();
+        const overlay = _createShell();
+
+        const content = document.createElement("div");
+        content.className = "osprey-overlay__content";
+
+        const badge = document.createElement("div");
+        badge.className = "osprey-overlay__badge osprey-overlay__badge--error";
+        badge.innerHTML = '<span class="osprey-overlay__badge-icon">\u2715</span> Scan Failed';
+        content.appendChild(badge);
+
+        const msg = document.createElement("div");
+        msg.className = "osprey-overlay__error-msg";
+        msg.textContent = errorMsg || "Could not connect to the Osprey backend. Make sure the server is running.";
+        content.appendChild(msg);
+
+        const urlInfo = document.createElement("div");
+        urlInfo.className = "osprey-overlay__email-info";
+        urlInfo.innerHTML =
+            `<div class="osprey-overlay__field"><span class="osprey-overlay__label">URL:</span> ${_esc(_truncUrl(url))}</div>`;
+        content.appendChild(urlInfo);
+
+        overlay.appendChild(content);
+        document.body.appendChild(overlay);
+        _makeDraggable(overlay, overlay.querySelector(".osprey-overlay__header"));
+    }
+
+    // ──────────────────────────────────────────────
     // Internal Helpers
     // ──────────────────────────────────────────────
 
@@ -203,6 +323,57 @@ var OverlayUI = (function () {
         return div.innerHTML;
     }
 
+    /**
+     * Truncate a URL for display.
+     */
+    function _truncUrl(url, max = 80) {
+        if (!url) return "";
+        return url.length > max ? url.slice(0, max) + "\u2026" : url;
+    }
+
+    /**
+     * Get badge styling config for URL classification labels.
+     */
+    function _getUrlBadgeConfig(label) {
+        switch (label) {
+            case "benign":
+                return {
+                    cssClass: "osprey-overlay__badge--safe",
+                    fillClass: "osprey-overlay__conf-fill--safe",
+                    icon: "\u2713",
+                    text: "Safe Website",
+                };
+            case "phishing":
+                return {
+                    cssClass: "osprey-overlay__badge--danger",
+                    fillClass: "osprey-overlay__conf-fill--danger",
+                    icon: "\u26A0",
+                    text: "Phishing Website",
+                };
+            case "defacement":
+                return {
+                    cssClass: "osprey-overlay__badge--warning",
+                    fillClass: "osprey-overlay__conf-fill--warning",
+                    icon: "\u26A0",
+                    text: "Defaced / Hacked Website",
+                };
+            case "malware":
+                return {
+                    cssClass: "osprey-overlay__badge--malware",
+                    fillClass: "osprey-overlay__conf-fill--malware",
+                    icon: "\u2622",
+                    text: "Malware Detected",
+                };
+            default:
+                return {
+                    cssClass: "osprey-overlay__badge--error",
+                    fillClass: "osprey-overlay__conf-fill--danger",
+                    icon: "?",
+                    text: "Unknown Classification",
+                };
+        }
+    }
+
     function _makeDraggable(element, handle) {
         let isDragging = false;
         let offsetX = 0;
@@ -233,6 +404,9 @@ var OverlayUI = (function () {
         showLoading,
         showResult,
         showError,
+        showUrlLoading,
+        showUrlResult,
+        showUrlError,
         remove,
     };
 })();

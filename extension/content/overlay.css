@@ -109,6 +109,18 @@
     border: 1px solid #ef9a9a;
 }
 
+.osprey-overlay__badge--warning {
+    background: #fff8e1;
+    color: #e65100;
+    border: 1px solid #ffe082;
+}
+
+.osprey-overlay__badge--malware {
+    background: #fce4ec;
+    color: #880e4f;
+    border: 1px solid #f48fb1;
+}
+
 .osprey-overlay__badge-icon {
     font-size: 18px;
     line-height: 1;
@@ -146,6 +158,14 @@
 
 .osprey-overlay__conf-fill--danger {
     background: linear-gradient(90deg, #E67E22, #F39C12);
+}
+
+.osprey-overlay__conf-fill--warning {
+    background: linear-gradient(90deg, #f57c00, #ffb74d);
+}
+
+.osprey-overlay__conf-fill--malware {
+    background: linear-gradient(90deg, #c62828, #e53935);
 }
 
 /* ---- Probabilities ---- */

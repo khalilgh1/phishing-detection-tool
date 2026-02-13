@@ -59,10 +59,12 @@ function renderStatus(tabInfo) {
             "Results appear in a floating overlay on the page."
         );
     } else {
-        setStatus("Inactive", "other");
+        setStatus("URL Scanner Active", "other");
         setInfo(
-            "Osprey works on Gmail.\n\n" +
-            "Navigate to mail.google.com to start\nscanning emails for phishing threats."
+            "Osprey is scanning this website.\n\n" +
+            "The URL is automatically analyzed for phishing,\n" +
+            "defacement, and malware threats.\n\n" +
+            "Page: " + truncate(tabInfo.url, 60)
         );
     }
 }
@@ -90,4 +92,8 @@ function setStatus(text, variant) {
 
 function setInfo(text) {
     dom.infoText.textContent = text;
+}
+
+function truncate(str, max) {
+    return str.length > max ? str.slice(0, max) + "\u2026" : str;
 }

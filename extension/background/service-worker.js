@@ -26,6 +26,11 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
             return true; // async response
         }
 
+        case "PREDICT_URL": {
+            handlePredictUrl(payload, sendResponse);
+            return true; // async response
+        }
+
         case "GET_TAB_INFO":
             handleGetTabInfo(sendResponse);
             return true;
@@ -67,6 +72,36 @@ async function handlePredictEmail(payload, sendResponse) {
         sendResponse({ success: true, result });
     } catch (error) {
         console.error("[Osprey SW] Prediction failed:", error);
+        sendResponse({ success: false, error: error.message });
+    }
+}
+
+/**
+ * Send a URL to the backend for URL classification.
+ */
+async function handlePredictUrl(payload, sendResponse) {
+    try {
+        const { url } = payload;
+        if (!url) throw new Error("No URL provided.");
+
+        console.log("[Osprey SW] Sending URL to backend for classification…");
+
+        const response = await fetch(`${API_BASE_URL}/predict-url`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ url }),
+        });
+
+        if (!response.ok) {
+            const errBody = await response.text();
+            throw new Error(`Backend returned ${response.status}: ${errBody}`);
+        }
+
+        const result = await response.json();
+        console.log("[Osprey SW] URL prediction result:", result);
+        sendResponse({ success: true, result });
+    } catch (error) {
+        console.error("[Osprey SW] URL prediction failed:", error);
         sendResponse({ success: false, error: error.message });
     }
 }
