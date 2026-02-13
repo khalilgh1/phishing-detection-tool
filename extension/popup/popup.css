@@ -1,0 +1,66 @@
+/* ============================================================
+   Popup Stylesheet — keeps all visual styling out of JS
+   ============================================================ */
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    width: 320px;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    background: #f5f7fa;
+    color: #1e293b;
+    padding: 16px;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+h1 {
+    font-size: 18px;
+    text-align: center;
+    color: #0f172a;
+}
+
+/* ---- Status Pill ---- */
+.status {
+    text-align: center;
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    background: #e2e8f0;
+    color: #475569;
+    transition: background 0.25s;
+}
+
+.status.gmail {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.status.other {
+    background: #dbeafe;
+    color: #1e40af;
+}
+
+/* ---- Info Section ---- */
+.section {
+    background: #fff;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+}
+
+.info-text {
+    font-size: 12px;
+    color: #475569;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}

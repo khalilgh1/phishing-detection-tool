@@ -1,0 +1,76 @@
+/* ============================================================
+   overlay.css  —  Styles for the floating info overlay
+   injected into the host page via content script.
+
+   All selectors are heavily namespaced to avoid clashing
+   with the host page's own styles.
+   ============================================================ */
+
+/* ---- Container ---- */
+.phishing-tool-overlay {
+    position: fixed;
+    z-index: 2147483647;
+    /* max z-index */
+    background: #1e293b;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+    font-family: "Segoe UI", system-ui, sans-serif;
+    color: #f8fafc;
+    min-width: 280px;
+    max-width: 420px;
+}
+
+/* ---- Header / Drag Handle ---- */
+.phishing-tool-overlay__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: #334155;
+    cursor: grab;
+    user-select: none;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.phishing-tool-overlay__header:active {
+    cursor: grabbing;
+}
+
+/* ---- Close Button ---- */
+.phishing-tool-overlay__close {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0 4px;
+    line-height: 1;
+}
+
+.phishing-tool-overlay__close:hover {
+    color: #f87171;
+}
+
+/* ---- Message Body ---- */
+.phishing-tool-overlay__body {
+    padding: 12px 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: #e2e8f0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ---- Screenshot Image ---- */
+.phishing-tool-overlay__image {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-top: 1px solid #475569;
+    max-height: 300px;
+    object-fit: contain;
+    background: #0f172a;
+}
