@@ -1,10 +1,8 @@
 /**
- * popup.js  —  Popup Status Display (Fully Automatic Extension)
+ * popup.js  —  Osprey Popup Status Display
  *
- * The popup is now purely informational — it shows what the
- * extension is doing on the current page. All detection and
- * capture logic runs automatically in the content script and
- * background service worker.
+ * Shows the extension's current status on the active page.
+ * All detection logic runs in the content script automatically.
  */
 
 // ──────────────────────────────────────────────
@@ -38,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     } catch (err) {
         setStatus("Error", "");
         setInfo("Something went wrong while detecting the page.");
-        console.error("[popup] Init error:", err);
+        console.error("[Osprey] Init error:", err);
     }
 });
 
@@ -49,23 +47,22 @@ document.addEventListener("DOMContentLoaded", async () => {
 function renderStatus(tabInfo) {
     if (!tabInfo?.url) {
         setStatus("No URL detected", "");
-        setInfo("Navigate to a website to begin automatic detection.");
+        setInfo("Navigate to Gmail to begin automatic phishing detection.");
         return;
     }
 
     if (tabInfo.url.startsWith(GMAIL_ORIGIN)) {
-        setStatus("Gmail detected", "gmail");
+        setStatus("Gmail Active", "gmail");
         setInfo(
-            "Monitoring Gmail for opened emails.\n" +
-            "When you open an email, the extension will automatically extract " +
-            "header and body snippets and display them in a floating overlay."
+            "Osprey is monitoring Gmail.\n\n" +
+            "Open an email to automatically scan it for phishing.\n" +
+            "Results appear in a floating overlay on the page."
         );
     } else {
-        setStatus("Screenshot mode", "other");
+        setStatus("Inactive", "other");
         setInfo(
-            "A screenshot of this page was automatically captured.\n" +
-            "A floating overlay on the page confirms success.\n\n" +
-            "Page: " + truncate(tabInfo.url, 60)
+            "Osprey works on Gmail.\n\n" +
+            "Navigate to mail.google.com to start\nscanning emails for phishing threats."
         );
     }
 }
@@ -93,8 +90,4 @@ function setStatus(text, variant) {
 
 function setInfo(text) {
     dom.infoText.textContent = text;
-}
-
-function truncate(str, max) {
-    return str.length > max ? str.slice(0, max) + "\u2026" : str;
 }

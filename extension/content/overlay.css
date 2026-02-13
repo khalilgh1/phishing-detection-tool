@@ -1,76 +1,230 @@
 /* ============================================================
-   overlay.css  —  Styles for the floating info overlay
-   injected into the host page via content script.
-
-   All selectors are heavily namespaced to avoid clashing
-   with the host page's own styles.
+   Osprey Overlay Styles
+   Blue (#1B4F72, #2E86C1) + Orange (#E67E22, #F39C12) theme
    ============================================================ */
 
 /* ---- Container ---- */
-.phishing-tool-overlay {
+.osprey-overlay {
     position: fixed;
     z-index: 2147483647;
-    /* max z-index */
-    background: #1e293b;
-    border-radius: 10px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.35);
+    top: 20px;
+    right: 20px;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(27, 79, 114, 0.22), 0 2px 8px rgba(0, 0, 0, 0.10);
     overflow: hidden;
-    font-family: "Segoe UI", system-ui, sans-serif;
-    color: #f8fafc;
-    min-width: 280px;
-    max-width: 420px;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    color: #1e293b;
+    min-width: 320px;
+    max-width: 400px;
+    border: 2px solid #2E86C1;
 }
 
 /* ---- Header / Drag Handle ---- */
-.phishing-tool-overlay__header {
+.osprey-overlay__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 12px;
-    background: #334155;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #1B4F72 0%, #2E86C1 100%);
     cursor: grab;
     user-select: none;
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.3px;
 }
 
-.phishing-tool-overlay__header:active {
+.osprey-overlay__header:active {
     cursor: grabbing;
 }
 
+.osprey-overlay__title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.osprey-overlay__logo {
+    width: 22px;
+    height: 22px;
+    border-radius: 4px;
+}
+
+.osprey-overlay__title {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
 /* ---- Close Button ---- */
-.phishing-tool-overlay__close {
-    background: transparent;
+.osprey-overlay__close {
+    background: rgba(255, 255, 255, 0.15);
     border: none;
-    color: #94a3b8;
+    color: #ffffff;
     font-size: 14px;
     cursor: pointer;
-    padding: 0 4px;
+    padding: 2px 7px;
+    border-radius: 4px;
+    line-height: 1;
+    transition: background 0.2s;
+}
+
+.osprey-overlay__close:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* ---- Content ---- */
+.osprey-overlay__content {
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* ---- Result Badge ---- */
+.osprey-overlay__badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+}
+
+.osprey-overlay__badge--safe {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #b7dfb9;
+}
+
+.osprey-overlay__badge--danger {
+    background: #fff3e0;
+    color: #e65100;
+    border: 1px solid #ffcc80;
+}
+
+.osprey-overlay__badge--error {
+    background: #fdecea;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
+}
+
+.osprey-overlay__badge-icon {
+    font-size: 18px;
     line-height: 1;
 }
 
-.phishing-tool-overlay__close:hover {
-    color: #f87171;
+/* ---- Confidence ---- */
+.osprey-overlay__confidence {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-/* ---- Message Body ---- */
-.phishing-tool-overlay__body {
-    padding: 12px 14px;
-    font-size: 13px;
-    line-height: 1.6;
-    color: #e2e8f0;
-    white-space: pre-wrap;
+.osprey-overlay__conf-label {
+    font-size: 12px;
+    color: #475569;
+}
+
+.osprey-overlay__conf-bar {
+    width: 100%;
+    height: 8px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.osprey-overlay__conf-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.5s ease;
+}
+
+.osprey-overlay__conf-fill--safe {
+    background: linear-gradient(90deg, #27ae60, #2ecc71);
+}
+
+.osprey-overlay__conf-fill--danger {
+    background: linear-gradient(90deg, #E67E22, #F39C12);
+}
+
+/* ---- Probabilities ---- */
+.osprey-overlay__probabilities {
+    background: #f8fafc;
+    border-radius: 6px;
+    padding: 8px 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.osprey-overlay__prob-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #475569;
+    padding: 2px 0;
+}
+
+/* ---- Divider ---- */
+.osprey-overlay__divider {
+    height: 1px;
+    background: #e2e8f0;
+}
+
+/* ---- Email Info ---- */
+.osprey-overlay__email-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.osprey-overlay__field {
+    font-size: 12px;
+    color: #475569;
+    line-height: 1.5;
     word-break: break-word;
 }
 
-/* ---- Screenshot Image ---- */
-.phishing-tool-overlay__image {
-    display: block;
-    width: 100%;
-    height: auto;
-    border-top: 1px solid #475569;
-    max-height: 300px;
-    object-fit: contain;
-    background: #0f172a;
+.osprey-overlay__label {
+    font-weight: 600;
+    color: #1B4F72;
+}
+
+/* ---- Error ---- */
+.osprey-overlay__error-msg {
+    font-size: 12px;
+    color: #c62828;
+    background: #fdecea;
+    padding: 8px 12px;
+    border-radius: 6px;
+    line-height: 1.5;
+}
+
+/* ---- Spinner ---- */
+.osprey-overlay__spinner-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 0;
+}
+
+.osprey-overlay__spinner {
+    width: 32px;
+    height: 32px;
+    border: 3px solid #e2e8f0;
+    border-top-color: #E67E22;
+    border-radius: 50%;
+    animation: osprey-spin 0.8s linear infinite;
+}
+
+@keyframes osprey-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.osprey-overlay__spinner-text {
+    font-size: 13px;
+    color: #64748b;
+    font-weight: 500;
 }

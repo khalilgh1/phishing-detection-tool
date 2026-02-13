@@ -4,24 +4,29 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Phishing Detection Tool</title>
+    <title>Osprey</title>
     <link rel="stylesheet" href="popup.css" />
 </head>
 
 <body>
     <div id="app">
-        <h1>Phishing Detector</h1>
+        <div class="header">
+            <img src="../icons/osprey.png" alt="Osprey" class="logo" />
+            <h1>Osprey</h1>
+        </div>
 
-        <!-- Status bar — shows which mode the extension is in -->
         <div id="status" class="status">Detecting page type…</div>
 
-        <!-- Info section — explains what the extension is doing automatically -->
         <section id="info-section" class="section">
             <p id="info-text" class="info-text">
-                This extension runs automatically.<br />
-                No manual action is required.
+                AI-powered email phishing detection.<br />
+                Open an email in Gmail to scan it automatically.
             </p>
         </section>
+
+        <div class="footer">
+            Powered by DistilBERT
+        </div>
     </div>
 
     <script src="popup.js"></script>

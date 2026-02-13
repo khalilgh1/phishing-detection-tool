@@ -1,5 +1,5 @@
 /* ============================================================
-   Popup Stylesheet — keeps all visual styling out of JS
+   Osprey Popup Stylesheet — Blue & Orange Theme
    ============================================================ */
 
 * {
@@ -10,8 +10,8 @@
 
 body {
     width: 320px;
-    font-family: "Segoe UI", system-ui, sans-serif;
-    background: #f5f7fa;
+    font-family: "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: #f8fafc;
     color: #1e293b;
     padding: 16px;
 }
@@ -22,17 +22,32 @@ body {
     gap: 12px;
 }
 
+/* ---- Header ---- */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.logo {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+}
+
 h1 {
-    font-size: 18px;
-    text-align: center;
-    color: #0f172a;
+    font-size: 20px;
+    color: #1B4F72;
+    font-weight: 700;
+    letter-spacing: 0.5px;
 }
 
 /* ---- Status Pill ---- */
 .status {
     text-align: center;
-    padding: 6px 12px;
-    border-radius: 6px;
+    padding: 8px 12px;
+    border-radius: 8px;
     font-size: 12px;
     font-weight: 600;
     background: #e2e8f0;
@@ -41,21 +56,24 @@ h1 {
 }
 
 .status.gmail {
-    background: #dcfce7;
-    color: #166534;
+    background: #dbeafe;
+    color: #1B4F72;
+    border: 1px solid #2E86C1;
 }
 
 .status.other {
-    background: #dbeafe;
-    color: #1e40af;
+    background: #fff7ed;
+    color: #9a3412;
+    border: 1px solid #E67E22;
 }
 
 /* ---- Info Section ---- */
 .section {
-    background: #fff;
+    background: #ffffff;
     border-radius: 8px;
     padding: 12px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 1px 4px rgba(27, 79, 114, 0.08);
+    border: 1px solid #e2e8f0;
 }
 
 .info-text {
@@ -63,4 +81,13 @@ h1 {
     color: #475569;
     line-height: 1.6;
     white-space: pre-wrap;
+}
+
+/* ---- Footer ---- */
+.footer {
+    text-align: center;
+    font-size: 10px;
+    color: #94a3b8;
+    padding-top: 4px;
+    letter-spacing: 0.3px;
 }
