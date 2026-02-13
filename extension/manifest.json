@@ -1,0 +1,50 @@
+{
+    "manifest_version": 3,
+    "name": "Phishing Detection Tool",
+    "version": "0.2.0",
+    "description": "A modular phishing detection extension — automatic Gmail email analysis & page screenshot capture.",
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "scripting",
+        "downloads"
+    ],
+    "host_permissions": [
+        "https://mail.google.com/*",
+        "<all_urls>"
+    ],
+    "background": {
+        "service_worker": "background/service-worker.js"
+    },
+    "action": {
+        "default_popup": "popup/popup.html",
+        "default_icon": {
+            "16": "icons/icon16.png",
+            "48": "icons/icon48.png",
+            "128": "icons/icon128.png"
+        }
+    },
+    "content_scripts": [
+        {
+            "matches": [
+                "<all_urls>"
+            ],
+            "js": [
+                "content/modules/utils.js",
+                "content/modules/gmail.js",
+                "content/modules/screenshot.js",
+                "content/modules/overlay-ui.js",
+                "content/content.js"
+            ],
+            "css": [
+                "content/overlay.css"
+            ],
+            "run_at": "document_idle"
+        }
+    ],
+    "icons": {
+        "16": "icons/icon16.png",
+        "48": "icons/icon48.png",
+        "128": "icons/icon128.png"
+    }
+}
