@@ -1,7 +1,7 @@
 from PIL import Image
 from imagehash import phash
 from pathlib import Path
-from backend.check_url_legitimacy import check_url_legitimacy
+from .check_url_legitimacy import check_url_legitimacy
 import io
 import base64
 
