@@ -1,1 +1,6 @@
+venv/**
+venv
+venv/*
+backend/__pycache__/**
 .*
+backend/distilbert_model/**
